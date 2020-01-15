@@ -1,7 +1,7 @@
 .board {
     text-align: center;
-    margin: 100 auto;
-    margin-bottom: 10px; 
+    margin: 60 auto;
+    margin-bottom: 3px; 
     width: 1000px;
     height: 600px; 
     overflow: auto;
@@ -25,10 +25,18 @@
     opacity: 1; 
 }
 
+.menucontainer {
+    display: flex; 
+    
+}
+
 h3 {
     text-align: center; 
     padding-top : 10px; 
     font-family: Arial, Helvetica, sans-serif; 
+    margin-top: 5px;
+    margin-left: 15%; 
+    margin-right: 10%; 
 
 
 }
@@ -36,4 +44,56 @@ h3 {
 .board .square:hover{
     background-color: "black";
     cursor: pointer;
+}
+
+/* Dropdown Menubar */
+.dropbtn {
+    color: black;
+    padding: 16px;
+    font-weight: bold;
+    font-size: 1.17em;
+    background-color: white; 
+    border: none; 
+}
+  
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.menucontainer .runbutton {
+    cursor: pointer; 
+    color: #303030;
+}
+
+.runbutton {
+    margin-top: 15px; 
+    margin-left: 10%;
+    color: black;
+    font-weight: bold;
+    font-size: 1.17em;
 }

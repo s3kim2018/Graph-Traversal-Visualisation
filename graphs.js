@@ -1,3 +1,13 @@
+var heading = document.querySelector(".board h2");
+var small = document.querySelector(".board #small");
+var medium = document.querySelector(".board #med");
+var large = document.querySelector(".board #large");
+var board = document.querySelector(".board");
+var nodes = new Map();
+var idmap = new Map();
+var startingnode;
+var endingnode;
+
 var main = function() {
     heading.style.marginTop = "70px";
     small.style.marginTop = "60px";
@@ -35,7 +45,7 @@ var generatesmall = function() {
     board.style.justifyContent = "flex-end";
     for (let i = 0; i < 50; i++) {
         for (let j = 0; j < 30; j++) {
-            var sq = document.createElement("square");   // Create a <button> element
+            var sq = document.createElement("sq");   // Create a <button> element
             sq.id = i.toString() + "-" + j.toString(); 
             sq.classList.add("square");
             sq.style.width = "19px";
@@ -69,6 +79,7 @@ var generatesmall = function() {
             }
             nodes.set(i.toString() + "-" + j.toString(), node);
             let element = document.getElementById(i.toString() + "-" + j.toString());
+            idmap.set(element, node);
             mark = 1; 
             document.querySelector("h3").innerHTML = "Select Starting Node";
             element.addEventListener("click", function() {clickevent(i.toString() + "-" + j.toString()) });
@@ -111,9 +122,51 @@ var clickevent = function(id) {
         } else {
             elem.style.backgroundColor = "brown";
             endingnode = nodes.get(id);
-            document.querySelector("h3").innerHTML = "Draw Walls.";
+            document.querySelector("h3").innerHTML = "Draw Walls and Choose an algorithm";
             removelisteners(); 
             addwalllisteners();
+            var style1 = document.createElement("style");
+            var style2 = document.createElement("style");
+
+            style1.appendChild(
+                document.createTextNode(".dropdown:hover .dropdown-content { display: block; }")
+            );
+            style2.appendChild(
+                document.createTextNode(".dropdown:hover .dropbtn { cursor: pointer; color: #303030; }")
+            );
+            document.querySelector("head").appendChild(style1);
+            document.querySelector("head").appendChild(style2);
+
+            document.querySelector(".dropbtn").innerHTML = "Algorithms ▽"
+                
+            document.querySelector(".menucontainer .dropdown .dropdown-content #dfs").addEventListener("click", function() {
+                document.querySelector(".dropbtn").innerHTML = "Depth First Search ▽";
+                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                document.querySelector(".runbutton").addEventListener("click", function() {
+                    run("dfs");
+                });
+            });
+            document.querySelector(".menucontainer .dropdown .dropdown-content #bfs").addEventListener("click", function() {
+                document.querySelector(".dropbtn").innerHTML = "Breadth First Search ▽";
+                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                document.querySelector(".runbutton").addEventListener("click", function() {
+                    run("bfs");
+                });
+            });
+            document.querySelector(".menucontainer .dropdown .dropdown-content #dijkstra").addEventListener("click", function() {
+                document.querySelector(".dropbtn").innerHTML = "Dijkstras ▽";
+                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                document.querySelector(".runbutton").addEventListener("click", function() {
+                    run("dijkstras");
+                });
+            });
+            document.querySelector(".menucontainer .dropdown .dropdown-content #astar").addEventListener("click", function() {
+                document.querySelector(".dropbtn").innerHTML = "A-Star ▽";
+                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                document.querySelector(".runbutton").addEventListener("click", function() {
+                    run("astar");
+                });
+            });
             mark = 0;
         }
     }
@@ -124,6 +177,9 @@ var removelisteners = function() {
     for (let i = 0; i < squares.length; i++) {
         var old_element = squares[i];
         var new_element = old_element.cloneNode(true);
+        var pastnode = idmap.get(old_element);
+        idmap.delete(old_element);
+        idmap.set(new_element, pastnode);
         old_element.parentNode.replaceChild(new_element, old_element);
     }
 }
@@ -131,36 +187,42 @@ var removelisteners = function() {
 var addwalllisteners = function() { 
     var squares = document.getElementsByClassName("square");
     for (let i = 0; i < squares.length; i++) {
-        var elem = squares[i];
+        let elem = squares[i];
         elem.addEventListener("mousedown", function() {
-            drawwalls(squares[i], 1);
+            drawwalls(elem, 1);
         });
         elem.addEventListener("mousemove", function() {
-            drawwalls(squares[i], 2);
+            drawwalls(elem, 2);
         });
         elem.addEventListener("mouseup", function() {
-            drawwalls(squares[i], 3);
+            drawwalls(elem, 3);
         });
     }
 }
 
 var dragging = false; 
 var drawwalls = function(id, state) {
+    console.log(idmap);
+    var node = idmap.get(id);
     if (state == 1) {
         dragging = true; 
+        node.visited = true; 
         id.style.backgroundColor = "grey";
     } else if (state == 2) {
         if (dragging == false) {
             return;
         } else {
+            node.visited = true; 
             id.style.backgroundColor = "grey";
         }
     } else if (state == 3) {
         if (dragging == false) {
             return;
+        } else {
+            dragging = false;
+            node.visited = true; 
+            id.style.backgroundColor = "grey";
         }
-        dragging = false;
-        id.style.backgroundColor = "grey";
     }
 }
 
@@ -185,15 +247,11 @@ var clear = function() {
     large.classList.remove("button");
 }
 
-var heading = document.querySelector(".board h2");
-var small = document.querySelector(".board #small");
-var medium = document.querySelector(".board #med");
-var large = document.querySelector(".board #large");
-var board = document.querySelector(".board");
-var nodes = new Map([]);
-var startingnode;
-var endingnode;
-main(); 
+function run(type) {
+    //FIXME
+}
+
+
 
 /* @arthor: Brian Kim
 A class representing the graphs data structure **/
@@ -205,3 +263,5 @@ class Graph {
     }
 
 }
+
+main(); 
