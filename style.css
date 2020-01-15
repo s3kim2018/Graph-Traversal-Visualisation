@@ -33,6 +33,7 @@ h3 {
 
 }
 
-.board sq:hover{
+.board .square:hover{
+    background-color: "black";
     cursor: pointer;
 }
