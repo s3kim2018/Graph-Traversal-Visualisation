@@ -63,7 +63,7 @@ var generatesmall = function() {
             } else if (i == 0 && j == 29) {
                 node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString()]);
             } else if (i == 49 && j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString()]);
             } else if (i == 49 && j == 29) {
                 node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()]);
             } else if (i == 0) {
@@ -251,6 +251,7 @@ function run(type) {
         endingnode.visited = false; 
         removelisteners();
         dfs(startingnode);
+        console.log(animate);
         anim(); 
         
     }
@@ -258,20 +259,25 @@ function run(type) {
 
 
 var animate = [];
+var record = true;
 async function dfs(node) {
-    debugger;
-    console.log(node);
     if (node == endingnode) {
         console.log("target found");
+        record = false; 
+        return;
     }
     node.visited = true; 
-    if (node != startingnode) {
+    if (node != startingnode && record == true) {
         animate.push(node);
     }
     for (let i = 0; i < node.edges.length; i++) {
         let id = node.edges[i];
-        console.log(id);
-        let nextnode = nodes.get(id);
+        var nextnode = nodes.get(id);
+        if (nextnode == undefined) {
+            console.log("I'm here");
+            console.log(id);
+            console.log(nextnode);
+        }
         if (nextnode.visited == false) {
             dfs(nextnode);
         }
@@ -281,8 +287,8 @@ async function dfs(node) {
 async function anim() {
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
-        node.style.boxShadow = "0px 0px 5px 3px orange inset";
-        await delay(200);
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
+        await delay(20);
     }
 }
 
