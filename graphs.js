@@ -43,8 +43,8 @@ var generatesmall = function() {
     board.style.display = "flex"; 
     board.style.flexWrap = "wrap";
     board.style.justifyContent = "flex-end";
-    for (let i = 0; i < 50; i++) {
-        for (let j = 0; j < 30; j++) {
+    for (let j = 0; j < 30; j++) {
+        for (let i = 0; i < 50; i++) {
             var sq = document.createElement("sq");   // Create a <button> element
             sq.id = i.toString() + "-" + j.toString(); 
             sq.classList.add("square");
@@ -59,23 +59,23 @@ var generatesmall = function() {
             let left = i - 1; 
             let down = j + 1; 
             if (i == 0 && j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString()  + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()]);
             } else if (i == 0 && j == 29) {
                 node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString()]);
             } else if (i == 49 && j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [left.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + down.toString()]);
             } else if (i == 49 && j == 29) {
-                node = new Graph(i.toString() + "-" + j.toString(), [left.toString() + "-" + j.toString(), i.toString() + "-" + up.toString(), left.toString() + "-" + up.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()]);
             } else if (i == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + down.toString(), i.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString()]);
             } else if (i == 49) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString(), i.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()]);
             } else if (j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), right.toString() + "-" + down.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + down.toString(), left.toString() + "-" + j.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()]);
             } else if (j == 29) {
-                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString(), i.toString() + "-" + up.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + j.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), left.toString() + "-" + j.toString(),  right.toString() + "-" + up.toString(), left.toString() + "-" + up.toString()]);
             } else {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + down.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()]);
             }
             nodes.set(i.toString() + "-" + j.toString(), node);
             let element = document.getElementById(i.toString() + "-" + j.toString());
@@ -202,7 +202,6 @@ var addwalllisteners = function() {
 
 var dragging = false; 
 var drawwalls = function(id, state) {
-    console.log(idmap);
     var node = idmap.get(id);
     if (state == 1) {
         dragging = true; 
@@ -248,10 +247,72 @@ var clear = function() {
 }
 
 function run(type) {
-    //FIXME
+    if (type == "dfs") {
+        endingnode.visited = false; 
+        removelisteners();
+        dfs(startingnode);
+        anim(); 
+        
+    }
 }
 
 
+var animate = [];
+async function dfs(node) {
+    debugger;
+    console.log(node);
+    if (node == endingnode) {
+        console.log("target found");
+    }
+    node.visited = true; 
+    if (node != startingnode) {
+        animate.push(node);
+    }
+    for (let i = 0; i < node.edges.length; i++) {
+        let id = node.edges[i];
+        console.log(id);
+        let nextnode = nodes.get(id);
+        if (nextnode.visited == false) {
+            dfs(nextnode);
+        }
+    }
+}
+
+async function anim() {
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        node.style.boxShadow = "0px 0px 5px 3px orange inset";
+        await delay(200);
+    }
+}
+
+async function iterdfs(node) {
+    debugger;
+    var stack = new Array(); 
+    stack.push(node);
+    while (stack.length > 0) {
+        let thisnode = stack.pop(); 
+        if (thisnode.visited == false) {
+            if (thisnode == endingnode) {
+                return;
+            }
+            document.getElementById(thisnode.val).style.boxShadow = "0px 0px 5px 3px orange inset";
+            thisnode.visited = true; 
+        }
+        for (let i = 0; i < thisnode.edges.length; i++) {
+            stack.push(nodes.get(thisnode.edges[i]));
+        }
+    }
+}
+
+
+async function delay(delayInms) {
+    return new Promise(resolve  => {
+      setTimeout(() => {
+        resolve(2);
+      }, delayInms);
+    });
+  }
 
 /* @arthor: Brian Kim
 A class representing the graphs data structure **/

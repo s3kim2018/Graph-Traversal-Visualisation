@@ -27,6 +27,8 @@
 
 .menucontainer {
     display: flex; 
+    width: 1000px; 
+    margin: auto; 
     
 }
 
@@ -35,7 +37,6 @@ h3 {
     padding-top : 10px; 
     font-family: Arial, Helvetica, sans-serif; 
     margin-top: 5px;
-    margin-left: 15%; 
     margin-right: 10%; 
 
 
@@ -44,6 +45,7 @@ h3 {
 .board .square:hover{
     background-color: "black";
     cursor: pointer;
+    transform: scale(1.2);
 }
 
 /* Dropdown Menubar */
