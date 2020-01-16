@@ -251,26 +251,56 @@ function run(type) {
         endingnode.visited = false; 
         removelisteners();
         dfs(startingnode);
-        console.log(animate);
         anim(); 
+        var button = document.querySelector(".menucontainer .runbutton");
+        var old_element = button
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        button = document.querySelector(".menucontainer .runbutton");
+        document.querySelector(".menucontainer .runbutton").innerHTML = "Reset Board";
+        button.addEventListener("click", resetboardsmall);
         
     }
 }
 
 function resetboardsmall() {
+    debugger; 
     for (let j = 0; j < 30; j++) {
         for (let i = 0; i < 50; i++) {
-            
+            let id = i.toString() + "-" + j.toString();
+            var node = document.getElementById(id);
+            if (node.style.boxShadow == "orange 0px 0px 5px 3px inset") {
+                node.style.boxShadow = "none";
+                nodes.get(id).visited = false; 
+            } 
+            if (node.style.backgroundColor == "yellow") {
+                node.style.backgroundColor = "white";
+            }
+            if (node.style.backgroundColor == "grey") {
+                nodes.get(id).visited = false; 
+                node.style.backgroundColor = "white";
+            }
         }
     }
+    animate = [];  
+    var button = document.querySelector(".menucontainer .runbutton");
+    var old_element = button
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+    button = document.querySelector(".menucontainer .runbutton");
+    document.querySelector(".menucontainer .runbutton").innerHTML = "";
+    addwalllisteners(); 
+    startingnode.visited = false; 
+    endingnode.visited = false; 
+    record = true; 
 }
 
 
 var animate = [];
 var record = true;
 async function dfs(node) {
+    debugger; 
     if (node == endingnode) {
-        console.log("target found");
         record = false; 
         return;
     }
@@ -285,6 +315,10 @@ async function dfs(node) {
             dfs(nextnode);
         }
     }
+}
+
+function bfs(node) {
+
 }
 
 async function anim() {

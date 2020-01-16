@@ -33,6 +33,7 @@
 }
 
 h3 {
+    font-size: 17px; 
     text-align: center; 
     padding-top : 10px; 
     font-family: Arial, Helvetica, sans-serif; 
@@ -50,10 +51,10 @@ h3 {
 
 /* Dropdown Menubar */
 .dropbtn {
+    font-size: 17px; 
     color: black;
     padding: 16px;
     font-weight: bold;
-    font-size: 1.17em;
     background-color: white; 
     border: none; 
 }
@@ -79,6 +80,8 @@ h3 {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
     display: block;
 }
 
@@ -89,13 +92,11 @@ h3 {
 
 .menucontainer .runbutton {
     cursor: pointer; 
+    margin-top: 15px; 
     color: #303030;
+    font-size: 17px;
+    margin-left: 10%;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.runbutton {
-    margin-top: 15px; 
-    margin-left: 10%;
-    color: black;
-    font-weight: bold;
-    font-size: 1.17em;
-}
