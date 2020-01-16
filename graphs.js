@@ -257,6 +257,14 @@ function run(type) {
     }
 }
 
+function resetboardsmall() {
+    for (let j = 0; j < 30; j++) {
+        for (let i = 0; i < 50; i++) {
+            
+        }
+    }
+}
+
 
 var animate = [];
 var record = true;
@@ -273,11 +281,6 @@ async function dfs(node) {
     for (let i = 0; i < node.edges.length; i++) {
         let id = node.edges[i];
         var nextnode = nodes.get(id);
-        if (nextnode == undefined) {
-            console.log("I'm here");
-            console.log(id);
-            console.log(nextnode);
-        }
         if (nextnode.visited == false) {
             dfs(nextnode);
         }
@@ -290,26 +293,13 @@ async function anim() {
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
         await delay(20);
     }
-}
-
-async function iterdfs(node) {
-    debugger;
-    var stack = new Array(); 
-    stack.push(node);
-    while (stack.length > 0) {
-        let thisnode = stack.pop(); 
-        if (thisnode.visited == false) {
-            if (thisnode == endingnode) {
-                return;
-            }
-            document.getElementById(thisnode.val).style.boxShadow = "0px 0px 5px 3px orange inset";
-            thisnode.visited = true; 
-        }
-        for (let i = 0; i < thisnode.edges.length; i++) {
-            stack.push(nodes.get(thisnode.edges[i]));
-        }
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        document.getElementById(node.val).style.backgroundColor = "yellow";
+        await delay(5);
     }
 }
+
 
 
 async function delay(delayInms) {
