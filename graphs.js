@@ -48,10 +48,10 @@ var generatesmall = function() {
             var sq = document.createElement("sq");   // Create a <button> element
             sq.id = i.toString() + "-" + j.toString(); 
             sq.classList.add("square");
-            sq.style.width = "19px";
-            sq.style.height = "19px";
+            sq.style.width = "19.6px";
+            sq.style.height = "19.6px";
             sq.style.backgroundColor = "white";
-            sq.style.border = "solid black 0.5px";
+            sq.style.border = "solid #87CEFA 0.2px";
             board.appendChild(sq);
             let node = null;
             let up = j - 1; 
@@ -201,26 +201,44 @@ var addwalllisteners = function() {
 }
 
 var dragging = false; 
-var drawwalls = function(id, state) {
-    var node = idmap.get(id);
+var drawwalls = function(elem, state) {
+    var node = idmap.get(elem);
     if (state == 1) {
-        dragging = true; 
-        node.visited = true; 
-        id.style.backgroundColor = "grey";
+        if (node != startingnode && node != endingnode) {
+            dragging = true; 
+            nodes.visited = true; 
+            nodes.delete(elem.id);
+            idmap.delete(elem);
+            nodes.set(elem.id, node)
+            idmap.set(elem, node);
+            elem.style.backgroundColor = "grey";
+        }
     } else if (state == 2) {
         if (dragging == false) {
             return;
         } else {
-            node.visited = true; 
-            id.style.backgroundColor = "grey";
+            if (node != startingnode && node != endingnode) {
+                node.visited = true; 
+                elem.style.backgroundColor = "grey";
+                nodes.delete(elem.id);
+                idmap.delete(elem);
+                nodes.set(elem.id, node)
+                idmap.set(elem, node);
+            }
         }
     } else if (state == 3) {
         if (dragging == false) {
             return;
         } else {
             dragging = false;
-            node.visited = true; 
-            id.style.backgroundColor = "grey";
+            if (node != startingnode && node != endingnode) {
+                node.visited = true; 
+                elem.style.backgroundColor = "grey";
+                nodes.delete(elem.id);
+                idmap.delete(elem);
+                nodes.set(elem.id, node)
+                idmap.set(elem, node);
+            }
         }
     }
 }
@@ -250,34 +268,38 @@ function run(type) {
     if (type == "dfs") {
         endingnode.visited = false; 
         removelisteners();
-        dfs(startingnode);
-        anim(); 
         var button = document.querySelector(".menucontainer .runbutton");
         var old_element = button
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
-        button = document.querySelector(".menucontainer .runbutton");
-        document.querySelector(".menucontainer .runbutton").innerHTML = "Reset Board";
-        button.addEventListener("click", resetboardsmall);
-        
+        dfs(startingnode);
+        animbfs(); 
     }
 }
 
+function resetbutton() {
+    var button = document.querySelector(".menucontainer .runbutton");
+    var old_element = button
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+    button = document.querySelector(".menucontainer .runbutton");
+    document.querySelector(".menucontainer .runbutton").innerHTML = "Reset Board";
+    button.addEventListener("click", resetboardsmall);
+}
+
 function resetboardsmall() {
-    debugger; 
     for (let j = 0; j < 30; j++) {
         for (let i = 0; i < 50; i++) {
             let id = i.toString() + "-" + j.toString();
+            nodes.get(id).visited = false; 
             var node = document.getElementById(id);
             if (node.style.boxShadow == "orange 0px 0px 5px 3px inset") {
                 node.style.boxShadow = "none";
-                nodes.get(id).visited = false; 
             } 
             if (node.style.backgroundColor == "yellow") {
                 node.style.backgroundColor = "white";
             }
             if (node.style.backgroundColor == "grey") {
-                nodes.get(id).visited = false; 
                 node.style.backgroundColor = "white";
             }
         }
@@ -287,20 +309,19 @@ function resetboardsmall() {
     var old_element = button
     var new_element = old_element.cloneNode(true);
     old_element.parentNode.replaceChild(new_element, old_element);
-    button = document.querySelector(".menucontainer .runbutton");
     document.querySelector(".menucontainer .runbutton").innerHTML = "";
     addwalllisteners(); 
-    startingnode.visited = false; 
-    endingnode.visited = false; 
-    record = true; 
+    record = true;
+    coloryellow = false;  
 }
 
 
 var animate = [];
+var coloryellow = false; 
 var record = true;
 async function dfs(node) {
-    debugger; 
-    if (node == endingnode) {
+    if (node === endingnode) {
+        coloryellow = true; 
         record = false; 
         return;
     }
@@ -317,21 +338,38 @@ async function dfs(node) {
     }
 }
 
-function bfs(node) {
+shortestpath = [];
+function bfs(node, steps) {
+    if (node === endingnode) {
+
+    }
+    node.visited = true;
+    for (let i = 0; i < node.edges.length; i++) {
+        let id = node.edges[i];
+        var nextnode = nodes.get(id);
+        if (nextnode.visited == false) {
+            bfs(nextnode, steps + 1);
+        }
+
+    }
+
 
 }
 
-async function anim() {
+async function animbfs() {
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
         await delay(20);
     }
-    for (let i = 0; i < animate.length; i++) {
-        var node = animate[i];
-        document.getElementById(node.val).style.backgroundColor = "yellow";
-        await delay(5);
+    if (coloryellow == true) {
+        for (let i = 0; i < animate.length; i++) {
+            var node = animate[i];
+            document.getElementById(node.val).style.backgroundColor = "yellow";
+            await delay(5);
+        }
     }
+    resetbutton();
 }
 
 
@@ -342,7 +380,8 @@ async function delay(delayInms) {
         resolve(2);
       }, delayInms);
     });
-  }
+}
+
 
 /* @arthor: Brian Kim
 A class representing the graphs data structure **/
