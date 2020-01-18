@@ -59,23 +59,23 @@ var generatesmall = function() {
             let left = i - 1; 
             let down = j + 1; 
             if (i == 0 && j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()], 1);
             } else if (i == 0 && j == 29) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString()], 1);
             } else if (i == 49 && j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString()], 1);
             } else if (i == 49 && j == 29) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()], 1);
             } else if (i == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString()], 1);
             } else if (i == 49) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()], 1);
             } else if (j == 0) {
-                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()], 1);
             } else if (j == 29) {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), left.toString() + "-" + j.toString(),  right.toString() + "-" + up.toString(), left.toString() + "-" + up.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), left.toString() + "-" + j.toString(),  right.toString() + "-" + up.toString(), left.toString() + "-" + up.toString()], 1);
             } else {
-                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()]);
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()], 1);
             }
             nodes.set(i.toString() + "-" + j.toString(), node);
             let element = document.getElementById(i.toString() + "-" + j.toString());
@@ -274,6 +274,15 @@ function run(type) {
         old_element.parentNode.replaceChild(new_element, old_element);
         dfs(startingnode);
         animbfs(); 
+    } else if (type == "dijkstra") {
+        removelisteners(); 
+        var button = document.querySelector(".menucontainer .runbutton");
+        var old_element = button
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        dijkstra(startingnode);
+        animbfs(); 
+        
     }
 }
 
@@ -338,22 +347,48 @@ async function dfs(node) {
     }
 }
 
-shortestpath = [];
-function bfs(node, steps) {
-    if (node === endingnode) {
+var shortestpath = new Map(); 
+function dijkstra(node) {
+    var queue = new Array();
+    queue.push(node);
 
-    }
-    node.visited = true;
-    for (let i = 0; i < node.edges.length; i++) {
-        let id = node.edges[i];
-        var nextnode = nodes.get(id);
-        if (nextnode.visited == false) {
-            bfs(nextnode, steps + 1);
+    for (let j = 0; j < 30; j++) {
+        for (let i = 0; i < 50; i++) {
+            let id = i.toString() + "-" + j.toString();
+            shortestpath.set(id, [Number.MAX_SAFE_INTEGER, ""]);
         }
-
     }
-
-
+    shortestpath.delete(startingnode.val);
+    shortestpath.set(startingnode.val, [1, startingnode.val]);
+    while (queue.length > 0) {
+        var node = queue.shift();
+        if (node.visited == false) {
+            if (node == endingnode) {
+                record = false; 
+            }
+            if (record == true && node != startingnode) {
+                animate.push(node);
+            }
+            var mapnode = shortestpath.get(node.val); 
+            var pathcost = mapnode[0];
+            var thispath = mapnode[1];
+            node.visited = true; 
+            for (let i = 0; i < node.edges.length; i++) {
+                let id = node.edges[i];
+                var nextnode = nodes.get(id);
+                var visitnode = shortestpath.get(nextnode.val);
+                var visitpathcost = visitnode[0];
+                var visitpath = visitnode[1];
+                if (pathcost + nextnode.weight < visitpathcost) {
+                    visitpath = thispath + nextnode.val;
+                    shortestpath.delete(nextnode.val);
+                    shortestpath.set(nextnode.val, [pathcost + nextnode.weight, visitpath]);
+                }
+                queue.push(nextnode);
+            }
+        }
+    }
+    console.log(shortestpath);
 }
 
 async function animbfs() {
@@ -372,6 +407,13 @@ async function animbfs() {
     resetbutton();
 }
 
+async function animdijkstra() { 
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
+        await delay(20);
+    }
+}
 
 
 async function delay(delayInms) {
@@ -386,10 +428,11 @@ async function delay(delayInms) {
 /* @arthor: Brian Kim
 A class representing the graphs data structure **/
 class Graph {
-    constructor(val, edges) {
+    constructor(val, edges, weight) {
         this.val = val; 
         this.edges = edges; 
         this.visited = false; 
+        this.weight = weight;
     }
 
 }
