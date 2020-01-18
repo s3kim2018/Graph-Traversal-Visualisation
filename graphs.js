@@ -380,7 +380,7 @@ function dijkstra(node) {
                 var visitpathcost = visitnode[0];
                 var visitpath = visitnode[1];
                 if (pathcost + nextnode.weight < visitpathcost) {
-                    visitpath = thispath + nextnode.val;
+                    visitpath = thispath + "," + nextnode.val;
                     shortestpath.delete(nextnode.val);
                     shortestpath.set(nextnode.val, [pathcost + nextnode.weight, visitpath]);
                 }
@@ -411,11 +411,15 @@ async function animdijkstra() {
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
-        await delay(15);
+        await delay(10);
     }
-    var node = shortestpath.get(targetnode.val);
+    var node = shortestpath.get(endingnode.val);
     var paths = node[1];
-    var pathslist = paths.split("");
+    var pathlist = paths.split(",");
+    for (let i = 0; i < pathlist.length; i++) {
+        document.getElementById(pathlist[i]).style.backgroundColor = "yellow";   
+        await delay(5);
+    }
     resetbutton(); 
 }
 
