@@ -274,14 +274,14 @@ function run(type) {
         old_element.parentNode.replaceChild(new_element, old_element);
         dfs(startingnode);
         animbfs(); 
-    } else if (type == "dijkstra") {
+    } else if (type == "dijkstras") {
         removelisteners(); 
         var button = document.querySelector(".menucontainer .runbutton");
         var old_element = button
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
         dijkstra(startingnode);
-        animbfs(); 
+        animdijkstra(); 
         
     }
 }
@@ -411,8 +411,12 @@ async function animdijkstra() {
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
-        await delay(20);
+        await delay(15);
     }
+    var node = shortestpath.get(targetnode.val);
+    var paths = node[1];
+    var pathslist = paths.split("");
+    resetbutton(); 
 }
 
 
