@@ -1,3 +1,5 @@
+/* @arthor: Brian Kim 
+Javascript Driver for Graph Visualization. **/
 var heading = document.querySelector(".board .menugrid h2");
 var small = document.querySelector(".board #small");
 var medium = document.querySelector(".board #med");
@@ -598,7 +600,8 @@ async function animbfs() {
 
 var astarmap = new Map();
 function astar(startingnode) {
-    var minheap = new MinHeap(); 
+    var MinHeap = new Heap(); 
+    //var minheap = new MinHeap(); 
     if (generated == "small") {
         createchunksmall();
     } else {
@@ -607,36 +610,40 @@ function astar(startingnode) {
     var startingchunk = astarmap.get(startingnode.val);
     startingchunk.path = startingnode.val; 
     startingchunk.f = startingchunk.heuristic;
-    minheap.insert(startingchunk);
-    while (true) {
-        var chunk = minheap.pop();
+    MinHeap.insert(startingchunk)
+    //minheap.insert(startingchunk);
+    while (MinHeap.heap.length > 1) {
+        //minheap.printheap(); 
+        var chunk = MinHeap.remove();
         var thisnode = chunk.node;
-        if (thisnode.visited == false) {
-            thisnode.visited = true; 
-            animate.push(thisnode);
-            if (thisnode == endingnode) {
-                break;
-            } else {
-                for (let i = 0; i < thisnode.edges.length; i++) {
-                    let fringechunk = astarmap.get(thisnode.edges[i]);
-                    let fringenode = fringechunk.node; 
-                    if (fringechunk.f > fringechunk.heuristic + fringenode.weight + chunk.sourced && fringenode.visited == false) {
-                        animate.push(fringenode);
-                        fringechunk.f = fringechunk.heuristic + fringenode.weight + chunk.sourced;
-                        fringechunk.path = chunk.path + "," + fringenode.val; 
-                        fringechunk.soured = fringenode.weight + chunk.sourced;
-                        if (fringechunk.inserted == false) {
-                            minheap.insert(fringechunk);
-                            fringechunk.inserted = true; 
-                        }  
+        console.log("The ID chosen is:" + thisnode.val);
+        thisnode.visited = true; 
+        animate.push(thisnode);
+        if (thisnode == endingnode) {
+            console.log(astarmap);
+            return;
+        }
+        for (let i = 0; i < thisnode.edges.length; i++) {
+            let fringechunk = astarmap.get(thisnode.edges[i]);
+            let fringenode = fringechunk.node; 
+            if (fringenode.visited == false) {
+                if (fringechunk.f > fringechunk.heuristic + fringenode.weight + chunk.sourced) {
+                    animate.push(fringenode);
+                    fringechunk.f = fringechunk.heuristic + fringenode.weight + chunk.sourced;
+                    fringechunk.path = chunk.path + "," + fringenode.val; 
+                    fringechunk.soured = fringenode.weight + chunk.sourced;
+                    if (fringechunk.inserted == false) {
+                        MinHeap.insert(fringechunk);
+                        //minheap.insert(fringechunk);
+                        fringechunk.inserted = true; 
                     }
-    
-                }
-    
+                } 
             }
 
-        } 
+        }         
+    
     }
+    
 }
 
 async function animateastar() {
@@ -662,30 +669,30 @@ async function animateastar() {
 }
 
 function createchunksmall() {
+    let targeti = parseInt(endingnode.val.split("-")[0], 10);
+    let targetj = parseInt(endingnode.val.split("-")[1], 10);
     for (let j = 0; j < 30; j++) {
         for (let i = 0; i < 50; i++) {
             var node = nodes.get(i.toString() + "-" + j.toString());
-            let targeti = parseInt(endingnode.val.split("-")[0], 10);
-            let targetj = parseInt(endingnode.val.split("-")[1], 10);
-            var subi = targeti - i;
-            var subj = targetj - j;
-            var heuristic = Math.hypot(subi, subj);
-            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(0, heuristic, Number.MAX_SAFE_INTEGER, "", node));
+            var subi = i - targeti;
+            var subj = j - targetj;
+            var heuristic = parseInt(Math.hypot(subi, subj), 10);
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(node.weight, heuristic, Number.MAX_SAFE_INTEGER, "", node));
         }
     }
     
 }
 
 function createchunkmed() {
+    let targeti = parseInt(endingnode.val.split("-")[0], 10);
+    let targetj = parseInt(endingnode.val.split("-")[1], 10);
     for (let j = 0; j < 60; j++) {
         for (let i = 0; i < 100; i++) {
             var node = nodes.get(i.toString() + "-" + j.toString());
-            let targeti = parseInt(endingnode.val.split("-")[0], 10);
-            let targetj = parseInt(endingnode.val.split("-")[1], 10);
             var subi = targeti - i;
             var subj = targetj - j;
             var heuristic = Math.hypot(subi, subj);
-            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(0, heuristic, Number.MAX_SAFE_INTEGER, "", node));
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(node.weight, heuristic, Number.MAX_SAFE_INTEGER, "", node));
         }
     }
 
@@ -708,70 +715,80 @@ class Chunk {
         this.path = path; 
         this.node = node; 
         this.inserted = false; 
+        //this.prevchunk = null;
     }
 }
 
-/* Min Heap designed to store chunks for constant retrieval time **/
-class MinHeap {
+class Heap {
     constructor() {
         this.heap = [null];
     }
-    getmin() {
-        return this.heap[1];
-    }
+	
+	insert = function(num) {
+		this.heap.push(num);
+		if (this.heap.length > 2) {
+			let idx = this.heap.length - 1;
+			while (this.heap[idx].f < this.heap[Math.floor(idx/2)].f) {
+				if (idx >= 1) {
+					[this.heap[Math.floor(idx/2)], this.heap[idx]] = [this.heap[idx], this.heap[Math.floor(idx/2)]];
+					if (Math.floor(idx/2) > 1) {
+						idx = Math.floor(idx/2);
+					} else {
+						break;
+					};
+				};
+			};
+		};
+	};
+	
+	remove = function() {
+		let smallest = this.heap[1];
+		if (this.heap.length > 2) {
+			this.heap[1] = this.heap[this.heap.length - 1];
+			this.heap.splice(this.heap.length - 1);
+			if (this.heap.length == 3) {
+				if (this.heap[1].f > this.heap[2].f) {
+					[this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]];
+				};
+				return smallest;
+			};
+			let i = 1;
+			let left = 2 * i;
+			let right = 2 * i + 1;
+			while (this.heap[i].f >= this.heap[left].f || this.heap[i].f >= this.heap[right].f) {
+				if (this.heap[left].f < this.heap[right].f) {
+					[this.heap[i], this.heap[left]] = [this.heap[left], this.heap[i]];
+					i = 2 * i
+				} else {
+					[this.heap[i], this.heap[right]] = [this.heap[right], this.heap[i]];
+					i = 2 * i + 1;
+				};
+				left = 2 * i;
+				right = 2 * i + 1;
+				if (this.heap[left] == undefined || this.heap[right] == undefined) {
+					break;
+				};
+			};
+		} else if (this.heap.length == 2) {
+			this.heap.splice(1, 1);
+		} else {
+			return null;
+		};
+		return smallest;
+	};
+  
+	sort = function() {
+		let result = new Array();
+		while (this.heap.length > 1) {
+			result.push(this.remove());
+		};
+		return result;
+	};
 
-    insert(node) {
-        this.heap.push(node);
-        if (this.heap.length > 1) {
-            let current = this.heap.length - 1; 
-            while (current > 1 && this.heap[Math.floor(current / 2)].f > this.heap[current].f) {
-                [this.heap[Math.floor(current / 2)], this.heap[current]] = [this.heap[current], this.heap[Math.floor(current / 2)]];
-                current = Math.floor(current / 2);
-            }
-        }
-    }
+};
 
-    pop() {
-        let smallest = this.heap[1];
-        if (this.heap.length > 2) {
-            this.heap[1] = this.heap[this.heap.length - 1]; 
-            this.heap.splice(this.heap.length - 1); //remove last element from the heap.
 
-            if (this.heap.length == 3) {
-                if (this.heap[1].f > this.heap[2].f) {
-                    [this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]];
-                }
-                return smallest; 
-            } else {
-                let current = 1; 
-                let leftchildindex = current * 2; 
-                let rightchildindex = current * 2 + 1; 
-
-                while (this.heap[leftchildindex] && this.heap[rightchildindex] && 
-                    (this.heap[current].f < this.heap[leftchildindex].f || this.heap[current].f < this.heap[rightchildindex].f)) {
-                        if (this.heap[leftchildindex].f < this.heap[rightchildindex].f) {
-                            [this.heap[current], this.heap[leftchildindex]] = [this.heap[leftchildindex], this.heap[current]];
-                            current = leftchildindex
-                        }
-                        else if (this.heap[rightchildindex].f < this.heap[leftchildindex].f) {
-                            [this.heap[current], this.heap[rightchildindex]] = [this.heap[rightchildindex], this.heap[current]];
-                            current = rightchildindex
-                        }
-                        leftchildindex = current * 2; 
-                        rightchildindex = current * 2 + 1;  
-                }
-            }
-        } else if (this.heap.length == 2) {
-            this.heap.splice(1, 1);
-        } else {
-            return null;
-        }
-        return smallest; 
-    }
-}
-
-/* @arthor: Brian Kim
-A class representing the graphs data structure **/
+/* A class representing the graphs data structure **/
 class Graph {
     constructor(val, edges, weight) {
         this.val = val; 
