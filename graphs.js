@@ -32,6 +32,7 @@ var generatemedium = function() {
             sq.classList.add("square");
             sq.style.width = "10px";
             sq.style.height = "10px";
+            sq.style.margin = '0'; 
             sq.style.backgroundColor = "white";
             sq.style.outline = "solid #87CEFA 0.3px";
             board.appendChild(sq);
@@ -83,6 +84,7 @@ var generatesmall = function() {
             sq.classList.add("square");
             sq.style.width = "20px";
             sq.style.height = "20px";
+            sq.style.margin = '0'; 
             sq.style.backgroundColor = "white";
             sq.style.outline = "solid #87CEFA 0.3px";
             board.appendChild(sq);
