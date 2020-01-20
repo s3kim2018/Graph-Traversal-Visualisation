@@ -676,7 +676,7 @@ function createchunksmall() {
             var node = nodes.get(i.toString() + "-" + j.toString());
             var subi = i - targeti;
             var subj = j - targetj;
-            var heuristic = parseInt(Math.hypot(subi, subj), 10);
+            var heuristic = Math.hypot(subi, subj);
             astarmap.set(i.toString() + "-" + j.toString(), new Chunk(node.weight, heuristic, Number.MAX_SAFE_INTEGER, "", node));
         }
     }
