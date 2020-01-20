@@ -6,9 +6,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <script language="JavaScript">
+            /**
+            * Disables right-click of mouse
+            */
+            window.onload = function() {
+                document.addEventListener("contextmenu", function(e){
+                e.preventDefault();
+                }, false);
+                function disabledEvent(e){
+                if (e.stopPropagation){
+                    e.stopPropagation();
+                } else if (window.event){
+                    window.event.cancelBubble = true;
+                }
+                e.preventDefault();
+                return false;
+                }
+            };
+        </script>
         <div class = "headbar">
             <div class = "flexone">
-                <h2> Graph Traversal + Shortest Path visualizer</h2>
+                <h2> Graph Traversal + Shortest Path Visualiser</h2>
                 <p> Developed by <a href = "https://s3kim2018.github.io/BrianKim-Website/">Brian Kim</a></p>
             </div>
             <div class = "flextwo">
@@ -23,10 +42,11 @@
             </div>
         </div>
         <div class = "board">
-            <h2> Grid Generation Options </h2>
-            <h4 id = "small" class = "button"> Small </h4>
-            <h4 id = "med" class = "button"> Medium </h4>
-            <h4 id = "large" class = "button"> Large </h4>
+            <div class = "menugrid">
+                <h2> Grid Generation Options </h2>
+                <h4 id = "small" class = "button"> Sparse </h4>
+                <h4 id = "med" class = "button"> Dense </h4>
+            </div>
         </div>
         <div class = "menucontainer">
             <h3>  </h3>

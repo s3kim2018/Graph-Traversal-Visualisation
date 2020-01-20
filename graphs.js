@@ -1,10 +1,11 @@
 var heading = document.querySelector(".board h2");
 var small = document.querySelector(".board #small");
 var medium = document.querySelector(".board #med");
-var large = document.querySelector(".board #large");
 var board = document.querySelector(".board");
+var menugrid = document.querySelector(".board .menugrid");
 var nodes = new Map();
 var idmap = new Map();
+var generated;
 var startingnode;
 var endingnode;
 
@@ -12,8 +13,7 @@ var main = function() {
     heading.style.marginTop = "70px";
     small.style.marginTop = "60px";
     medium.style.marginTop = "60px";
-    large.style.marginTop = "60px";
-    board.style.background = 'url("img/background.gif")';
+    board.style.background = 'url("img/bridges.png")';
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
     large.addEventListener("click", generatelarge);
@@ -21,25 +21,57 @@ var main = function() {
 
 var generatemedium = function() {
     clear();
+    generated = "medium";
     board.style.display = "flex"; 
     board.style.flexWrap = "wrap";
     board.style.alignContent = "flex-start";
-    for (let i = 0; i < 100; i++) {
-        for (let j = 0; j < 60; j++) {
-            var sq = document.createElement("square");   // Create a <button> element
-            sq.id = i.toString() + j.toString(); 
-            sq.style.width = "9px";
-            sq.style.height = "9px";
-            sq.style.backgroundColor = "#F5F5F5";
-            sq.style.border = "solid black 0.5px";
+    for (let j = 0; j < 60; j++) {
+        for (let i = 0; i < 100; i++) {
+            var sq = document.createElement("sq");   // Create a <button> element
+            sq.id = i.toString() + "-" + j.toString(); 
+            sq.classList.add("square");
+            sq.style.width = "9.6px";
+            sq.style.height = "9.6px";
+            sq.style.backgroundColor = "white";
+            sq.style.border = "solid #87CEFA 0.2px";
             board.appendChild(sq);
-
+            let node = null;
+            let up = j - 1; 
+            let right = i + 1; 
+            let left = i - 1; 
+            let down = j + 1; 
+            if (i == 0 && j == 0) {
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()], 1);
+            } else if (i == 0 && j == 59) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), right.toString() + "-" + up.toString()], 1);
+            } else if (i == 99 && j == 0) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString()], 1);
+            } else if (i == 99 && j == 59) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString()], 1);
+            } else if (i == 0) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString()], 1);
+            } else if (i == 99) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()], 1);
+            } else if (j == 0) {
+                node = new Graph(i.toString() + "-" + j.toString(), [right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), left.toString() + "-" + down.toString(), right.toString() + "-" + down.toString()], 1);
+            } else if (j == 59) {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), left.toString() + "-" + j.toString(),  right.toString() + "-" + up.toString(), left.toString() + "-" + up.toString()], 1);
+            } else {
+                node = new Graph(i.toString() + "-" + j.toString(), [i.toString() + "-" + up.toString(), right.toString() + "-" + j.toString(), i.toString() + "-" + down.toString(), left.toString() + "-" + j.toString(), right.toString() + "-" + up.toString(), right.toString() + "-" + down.toString(), left.toString() + "-" + up.toString(), left.toString() + "-" + down.toString()], 1);
+            }
+            nodes.set(i.toString() + "-" + j.toString(), node);
+            let element = document.getElementById(i.toString() + "-" + j.toString());
+            idmap.set(element, node);
+            mark = 1; 
+            document.querySelector("h3").innerHTML = "Select Starting Node";
+            element.addEventListener("click", function() {clickevent(i.toString() + "-" + j.toString()) });
         }
     }
 }
 
 var generatesmall = function() {
     clear(); 
+    generated = "small";
     board.style.display = "flex"; 
     board.style.flexWrap = "wrap";
     board.style.justifyContent = "flex-end";
@@ -87,25 +119,6 @@ var generatesmall = function() {
     }
 }
 
-var generatelarge = function() {
-    clear();
-    board.style.display = "flex"; 
-    board.style.flexWrap = "wrap";
-    board.style.alignContent = "flex-start";
-    for (let i = 0; i < 125; i++) {
-        for (let j = 0; j < 75; j++) {
-            var sq = document.createElement("square");   // Create a <button> element
-            sq.id = i.toString() + j.toString(); 
-            sq.style.width = "7px";
-            sq.style.height = "7px";
-            sq.style.backgroundColor = "#F5F5F5";
-            sq.style.border = "solid black 0.5px";
-            board.appendChild(sq);
-
-        }
-    }
-    clear(); 
-}
 
 var mark; 
 var clickevent = function(id) {
@@ -184,18 +197,26 @@ var removelisteners = function() {
     }
 }
 
+
+
 var addwalllisteners = function() { 
     var squares = document.getElementsByClassName("square");
     for (let i = 0; i < squares.length; i++) {
         let elem = squares[i];
-        elem.addEventListener("mousedown", function() {
-            drawwalls(elem, 1);
+
+        elem.addEventListener("mousedown", function(event) {
+            if (event.button == 0) {
+                drawwalls(elem, 1);
+            }
         });
         elem.addEventListener("mousemove", function() {
             drawwalls(elem, 2);
         });
         elem.addEventListener("mouseup", function() {
             drawwalls(elem, 3);
+        });
+        elem.addEventListener("contextmenu", function(){
+            addweights(elem);
         });
     }
 }
@@ -243,25 +264,36 @@ var drawwalls = function(elem, state) {
     }
 }
 
+var addweights = function(elem) { 
+    var node = idmap.get(elem);
+    node.weight = 5;
+    elem.style.backgroundColor = "pink";
+    nodes.delete(elem.id);
+    idmap.delete(elem);
+    nodes.set(elem.id, node)
+    idmap.set(elem, node);
+}
+
 var clear = function() {
     heading.style.margin = "0";
     small.style.margin = "0";
     medium.style.margin = "0";
-    large.style.margin = "0";
 
     small.removeEventListener("click", generatesmall);
     medium.removeEventListener("click", generatemedium);
-    large.removeEventListener("click", generatelarge); 
 
     board.style.removeProperty("background");
     board.style.backgroundColor = "white"; 
     heading.innerHTML = "";
     small.innerHTML = "";
     medium.innerHTML = "";
-    large.innerHTML = "";
     small.classList.remove("button");
     medium.classList.remove("button");
-    large.classList.remove("button");
+    menugrid.style.width = "0px"; 
+    menugrid.style.height = "0px"; 
+    menugrid.style.margin = "0";
+
+
 }
 
 function run(type) {
@@ -273,7 +305,7 @@ function run(type) {
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
         dfs(startingnode);
-        animbfs(); 
+        animdfs(); 
     } else if (type == "dijkstras") {
         removelisteners(); 
         var button = document.querySelector(".menucontainer .runbutton");
@@ -282,7 +314,21 @@ function run(type) {
         old_element.parentNode.replaceChild(new_element, old_element);
         dijkstra(startingnode);
         animdijkstra(); 
-        
+    } else if (type == "bfs") {
+        removelisteners(); 
+        var button = document.querySelector(".menucontainer .runbutton");
+        var old_element = button
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        bfs(startingnode);
+        animbfs();
+    } else if (type == "astar") {
+        var button = document.querySelector(".menucontainer .runbutton");
+        var old_element = button
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        astar(startingnode);
+
     }
 }
 
@@ -293,7 +339,11 @@ function resetbutton() {
     old_element.parentNode.replaceChild(new_element, old_element);
     button = document.querySelector(".menucontainer .runbutton");
     document.querySelector(".menucontainer .runbutton").innerHTML = "Reset Board";
-    button.addEventListener("click", resetboardsmall);
+    if (generated == "small") {
+        button.addEventListener("click", resetboardsmall);
+    } else if (generated == "medium") {
+        button.addEventListener("click", resetboardmedium);
+    }
 }
 
 function resetboardsmall() {
@@ -301,11 +351,41 @@ function resetboardsmall() {
         for (let i = 0; i < 50; i++) {
             let id = i.toString() + "-" + j.toString();
             nodes.get(id).visited = false; 
+            nodes.get(id).weight = 1; 
             var node = document.getElementById(id);
-            if (node.style.boxShadow == "orange 0px 0px 5px 3px inset") {
+            if (node.style.boxShadow == "rgb(255, 204, 153) 0px 0px 5px 1.5px inset") {
                 node.style.boxShadow = "none";
             } 
-            if (node.style.backgroundColor == "yellow") {
+            if (node.style.backgroundColor == "gold" || node.style.backgroundColor == "pink") {
+                node.style.backgroundColor = "white";
+            }
+            if (node.style.backgroundColor == "grey") {
+                node.style.backgroundColor = "white";
+            }
+        }
+    }
+    animate = [];  
+    var button = document.querySelector(".menucontainer .runbutton");
+    var old_element = button
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+    document.querySelector(".menucontainer .runbutton").innerHTML = "";
+    addwalllisteners(); 
+    record = true;
+    coloryellow = false;  
+}
+
+function resetboardmedium() { 
+    for (let j = 0; j < 60; j++) {
+        for (let i = 0; i < 100; i++) {
+            let id = i.toString() + "-" + j.toString();
+            nodes.get(id).visited = false; 
+            nodes.get(id).weight = 1; 
+            var node = document.getElementById(id);
+            if (node.style.boxShadow == "rgb(255, 204, 153) 0px 0px 5px 1.5px inset") {
+                node.style.boxShadow = "none";
+            } 
+            if (node.style.backgroundColor == "gold" || node.style.backgroundColor == "pink") {
                 node.style.backgroundColor = "white";
             }
             if (node.style.backgroundColor == "grey") {
@@ -347,15 +427,48 @@ async function dfs(node) {
     }
 }
 
+function bfs(node) {
+    var queue = new Array(); 
+    queue.push(node); 
+    while (queue.length > 0) {
+        var node = queue.shift();
+        if (node.visited == false) {
+            if (node != startingnode && node != endingnode) {
+                animate.push(node);
+            }
+            if (node == endingnode) {
+                break;
+            } 
+            node.visited = true; 
+            
+            for (let i = 0; i < node.edges.length; i++) {
+                let id = node.edges[i];
+                var nextnode = nodes.get(id);
+                queue.push(nextnode)
+            }
+            
+        }
+    }
+
+}
+
 var shortestpath = new Map(); 
 function dijkstra(node) {
     var queue = new Array();
     queue.push(node);
-
-    for (let j = 0; j < 30; j++) {
-        for (let i = 0; i < 50; i++) {
-            let id = i.toString() + "-" + j.toString();
-            shortestpath.set(id, [Number.MAX_SAFE_INTEGER, ""]);
+    if (generated == "small") {
+        for (let j = 0; j < 30; j++) {
+            for (let i = 0; i < 50; i++) {
+                let id = i.toString() + "-" + j.toString();
+                shortestpath.set(id, [Number.MAX_SAFE_INTEGER, ""]);
+            }
+        }
+    } else if (generated == "medium") {
+        for (let j = 0; j < 60; j++) {
+            for (let i = 0; i < 100; i++) {
+                let id = i.toString() + "-" + j.toString();
+                shortestpath.set(id, [Number.MAX_SAFE_INTEGER, ""]);
+            }
         }
     }
     shortestpath.delete(startingnode.val);
@@ -388,19 +501,21 @@ function dijkstra(node) {
             }
         }
     }
-    console.log(shortestpath);
 }
 
-async function animbfs() {
+
+async function animdfs() {
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
-        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
-        await delay(20);
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
+        await delay(14);
     }
+    debugger; 
     if (coloryellow == true) {
         for (let i = 0; i < animate.length; i++) {
             var node = animate[i];
-            document.getElementById(node.val).style.backgroundColor = "yellow";
+            document.getElementById(node.val).style.bosShadow = "none";
+            document.getElementById(node.val).style.backgroundColor = "gold";
             await delay(5);
         }
     }
@@ -410,19 +525,103 @@ async function animbfs() {
 async function animdijkstra() { 
     for (let i = 0; i < animate.length; i++) {
         var node = animate[i];
-        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 3px orange inset";
-        await delay(10);
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
+        await delay(6);
     }
     var node = shortestpath.get(endingnode.val);
     var paths = node[1];
     var pathlist = paths.split(",");
-    for (let i = 0; i < pathlist.length; i++) {
-        document.getElementById(pathlist[i]).style.backgroundColor = "yellow";   
-        await delay(5);
+    if (pathlist.length > 1) {
+        for (let i = 0; i < pathlist.length; i++) {
+            if (pathlist[i] != startingnode.val && pathlist[i] != endingnode.val) {
+                document.getElementById(pathlist[i]).style.boxShadow = "none";
+                document.getElementById(pathlist[i]).style.backgroundColor = "gold";   
+            }
+            await delay(5);
+        }
     }
     resetbutton(); 
 }
 
+async function animbfs() {
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
+        await delay(6);
+    } 
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        document.getElementById(node.val).style.boxShadow = "none";
+        document.getElementById(node.val).style.backgroundColor = "gold";
+        await delay(3);
+    } 
+    resetbutton(); 
+}
+
+var astarmap = new Map();
+function astar(startingnode) {
+    var minheap = new MinHeap(); 
+    if (generated == "small") {
+        createchunksmall();
+    } else {
+        createchunkmed(); 
+    }
+    var startingchunk = astarmap.get(startingnode.id);
+    startingchunk.path = startingnode.id; 
+    startingchunk.f = startingchunk.heuristic;
+    minheap.insert(startingchunk);
+
+    while (true) {
+        var chunk = minheap.pop();
+        var node = chunk.node; 
+        if (node == endingnode) {
+            return;
+        } else {
+            for (let i = 0; i < node.edges.length; i++) {
+
+            }
+
+        }
+    }
+
+    
+}
+
+function createchunksmall() {
+    for (let j = 0; j < 30; j++) {
+        for (let i = 0; i < 50; i++) {
+            var node = nodes.get(i.toString() + "-" + j.toString());
+            if (node == endingnode) {
+                continue; 
+            }
+            let targeti = parseInt(endingnode.val.splice("-")[0], 10);
+            let targetj = parseInt(endingnode.val.splice("-")[1], 10);
+            var subi = targeti - i;
+            var subj = targetj - j;
+            var heuristic = Math.hypot(subi, subj);
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(null, heuristic, Math.MAX_SAFE_INTEGER, "", node));
+        }
+    }
+    
+}
+
+function createchunkmed() {
+    for (let j = 0; j < 60; j++) {
+        for (let i = 0; i < 100; i++) {
+            var node = nodes.get(i.toString() + "-" + j.toString());
+            if (node == endingnode) {
+                continue; 
+            }
+            let targeti = parseInt(endingnode.val.splice("-")[0], 10);
+            let targetj = parseInt(endingnode.val.splice("-")[1], 10);
+            var subi = targeti - i;
+            var subj = targetj - j;
+            var heuristic = Math.hypot(subi, subj);
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(null, heuristic, Math.MAX_SAFE_INTEGER, "", node));
+        }
+    }
+
+}
 
 async function delay(delayInms) {
     return new Promise(resolve  => {
@@ -432,6 +631,76 @@ async function delay(delayInms) {
     });
 }
 
+/* Class Designed to store nodes, heuristic, and f value for A* Algorithm **/
+class Chunk {
+    constructor(sourced, heuristic, f, path, node) {
+        this.sourced = sourced;
+        this.heuristic = heuristic;
+        this.f = f; 
+        this.path = path; 
+        this.node = node; 
+        this.visited = false; 
+    }
+}
+
+/* Min Heap designed to store chunks for constant retrieval time **/
+class MinHeap {
+    constructor() {
+        this.heap = [null];
+    }
+    getmin() {
+        return this.heap[1];
+    }
+
+    insert(node) {
+        this.heap.push(node);
+        if (this.heap.length > 1) {
+            let current = this.heap.length - 1; 
+            while (current > 1 && this.heap[Math.floor(current / 2)].f > this.heap[current].f) {
+                [this.heap[Math.floor(current / 2)], this.heap[current]] = [this.heap[currnet], this.heap[Math.floor(current / 2)]];
+                current = Math.floor(current / 2);
+            }
+        }
+    }
+
+    pop() {
+        let smallest = this.heap[1];
+        if (this.heap.length > 2) {
+            this.heap[1] = this.heap[this.heap.length - 1]; 
+            this.heap.splice(this.heap.length - 1); //remove last element from the heap.
+
+            if (this.heap.length == 3) {
+                if (this.heap[1].f > this.heap[2].f) {
+                    [this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]];
+                }
+                return smallest; 
+            } else {
+                let current = 1; 
+                let leftchildindex = current * 2; 
+                let rightchildindex = current * 2 + 1; 
+
+                while (this.heap[leftchildindex] && this.heap[rightchildindex] && 
+                    (this.heap[current].f < this.heap[leftchildindex].f || this.heap[current].f < this.heap[rightchildindex].f)) {
+                        if (this.heap[leftchildindex].f < this.heap[rightchildindex].f) {
+                            [this.heap[current], this.heap[leftchildindex]] = [this.heap[leftchildindex], this.heap[current]];
+                            current = leftchildindex
+                        }
+                        else if (this.heap[rightchildindex].f < this.heap[leftchildindex].f) {
+                            [this.heap[current], this.heap[rightchildindex]] = [this.heap[rightchildindex], this.heap[current]];
+                            current = rightchildindex
+                        }
+                        leftchildindex = current * 2; 
+                        rightchildindex = current * 2 + 1;  
+                }
+            }
+        } else if (this.heap.length == 2) {
+            this.heap.splice(1, 1);
+        } else {
+            return null;
+        }
+        return smallest; 
+    }
+}
 
 /* @arthor: Brian Kim
 A class representing the graphs data structure **/

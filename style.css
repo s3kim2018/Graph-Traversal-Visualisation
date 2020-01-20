@@ -55,7 +55,7 @@
     background-color: gray; 
 }
 .headbar .flextwo #redbox{
-    background-color: red; 
+    background-color: brown; 
 }
 .headbar .flextwo #greenbox{
     background-color: lightgreen; 
@@ -74,14 +74,24 @@
 }
 
 /* Menu Section */
-.board h2 {
+
+.board .menugrid {
+    margin: auto; 
+    margin-top: 80px; 
+    width: 700px; 
+    height: 400px; 
+    background-color: rgba(72, 72, 72, 0.6);
+}
+.board .menugrid h2 {
+    opacity: 1; 
     color: white; 
     font-family: Arial, Helvetica, sans-serif; 
 }
 
-.board .button {
+.board .menugrid .button {
     color: white; 
     font-family: Arial, Helvetica, sans-serif; 
+    font-size: 18px; 
     opacity: 0.9; 
     padding: 0; 
 }
