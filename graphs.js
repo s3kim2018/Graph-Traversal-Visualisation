@@ -33,7 +33,7 @@ var generatemedium = function() {
             sq.style.width = "9.6px";
             sq.style.height = "9.6px";
             sq.style.backgroundColor = "white";
-            sq.style.border = "solid #87CEFA 0.2px";
+            sq.style.border = "solid #87CEFA 0.15px";
             board.appendChild(sq);
             let node = null;
             let up = j - 1; 
@@ -83,7 +83,7 @@ var generatesmall = function() {
             sq.style.width = "19.6px";
             sq.style.height = "19.6px";
             sq.style.backgroundColor = "white";
-            sq.style.border = "solid #87CEFA 0.2px";
+            sq.style.border = "solid #87CEFA 0.15px";
             board.appendChild(sq);
             let node = null;
             let up = j - 1; 
@@ -402,6 +402,7 @@ function resetboardsmall() {
     addwalllisteners(); 
     record = true;
     coloryellow = false;  
+    astarmap = new Map(); 
     needreset = false; 
 }
 
@@ -431,7 +432,8 @@ function resetboardmedium() {
     document.querySelector(".menucontainer .runbutton").innerHTML = "";
     addwalllisteners(); 
     record = true;
-    coloryellow = false;  
+    coloryellow = false;
+    astarmap = new Map();   
     needreset = false; 
 }
 
