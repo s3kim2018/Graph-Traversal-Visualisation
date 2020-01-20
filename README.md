@@ -1,6 +1,8 @@
-# Graph Traversal Visualisation V1
+# Graph Traversal Visualisation V1 
 <br/>
-Features:
+https://s3kim2018.github.io/Graph-Traversal-Visualisation/
+<br/>
+Features: <br/>
 - Animates BFS, DFS, Dijkstras, and A star <br/>
 - User is able to draw walls, add weights <br/>
 - User is able to choose how dense the grid generation is <br/>
