@@ -1,4 +1,4 @@
-var heading = document.querySelector(".board h2");
+var heading = document.querySelector(".board .menugrid h2");
 var small = document.querySelector(".board #small");
 var medium = document.querySelector(".board #med");
 var board = document.querySelector(".board");
@@ -11,7 +11,7 @@ var startingnode;
 var endingnode;
 
 var main = function() {
-    heading.style.marginTop = "70px";
+    heading.style.paddingTop = "70px";
     small.style.marginTop = "60px";
     medium.style.marginTop = "60px";
     board.style.background = 'url("img/bridges.png")';
@@ -135,7 +135,7 @@ var clickevent = function(id) {
         } else {
             elem.style.backgroundColor = "brown";
             endingnode = nodes.get(id);
-            document.querySelector("h3").innerHTML = "Draw Walls and Choose an algorithm";
+            document.querySelector("h3").innerHTML = "Draw Walls (Drag)   Add Weights (Left Click)";
             removelisteners(); 
             addwalllisteners();
             var style1 = document.createElement("style");
@@ -155,7 +155,7 @@ var clickevent = function(id) {
             document.querySelector(".menucontainer .dropdown .dropdown-content #dfs").addEventListener("click", function() {
                 if (needreset == false) {
                     document.querySelector(".dropbtn").innerHTML = "Depth First Search ▽";
-                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm";
                     var button = document.querySelector(".menucontainer .runbutton");
                     var old_element = button
                     var new_element = old_element.cloneNode(true);
@@ -168,7 +168,7 @@ var clickevent = function(id) {
             document.querySelector(".menucontainer .dropdown .dropdown-content #bfs").addEventListener("click", function() {
                 if (needreset == false) {
                     document.querySelector(".dropbtn").innerHTML = "Breadth First Search ▽";
-                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm";
                     var button = document.querySelector(".menucontainer .runbutton");
                     var old_element = button
                     var new_element = old_element.cloneNode(true);
@@ -181,7 +181,7 @@ var clickevent = function(id) {
             document.querySelector(".menucontainer .dropdown .dropdown-content #dijkstra").addEventListener("click", function() {
                 if (needreset == false) {
                     document.querySelector(".dropbtn").innerHTML = "Dijkstras ▽";
-                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm";
                     var button = document.querySelector(".menucontainer .runbutton");
                     var old_element = button
                     var new_element = old_element.cloneNode(true);
