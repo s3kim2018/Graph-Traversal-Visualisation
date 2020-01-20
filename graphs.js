@@ -3,6 +3,7 @@ var small = document.querySelector(".board #small");
 var medium = document.querySelector(".board #med");
 var board = document.querySelector(".board");
 var menugrid = document.querySelector(".board .menugrid");
+var needreset = false; 
 var nodes = new Map();
 var idmap = new Map();
 var generated;
@@ -16,7 +17,6 @@ var main = function() {
     board.style.background = 'url("img/bridges.png")';
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
-    large.addEventListener("click", generatelarge);
 }
 
 var generatemedium = function() {
@@ -153,32 +153,56 @@ var clickevent = function(id) {
             document.querySelector(".dropbtn").innerHTML = "Algorithms ▽"
                 
             document.querySelector(".menucontainer .dropdown .dropdown-content #dfs").addEventListener("click", function() {
-                document.querySelector(".dropbtn").innerHTML = "Depth First Search ▽";
-                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
-                document.querySelector(".runbutton").addEventListener("click", function() {
-                    run("dfs");
-                });
+                if (needreset == false) {
+                    document.querySelector(".dropbtn").innerHTML = "Depth First Search ▽";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    var button = document.querySelector(".menucontainer .runbutton");
+                    var old_element = button
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);                
+                    document.querySelector(".runbutton").addEventListener("click", function() {
+                        run("dfs");
+                    });
+                }
             });
             document.querySelector(".menucontainer .dropdown .dropdown-content #bfs").addEventListener("click", function() {
-                document.querySelector(".dropbtn").innerHTML = "Breadth First Search ▽";
-                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
-                document.querySelector(".runbutton").addEventListener("click", function() {
-                    run("bfs");
-                });
+                if (needreset == false) {
+                    document.querySelector(".dropbtn").innerHTML = "Breadth First Search ▽";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    var button = document.querySelector(".menucontainer .runbutton");
+                    var old_element = button
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+                    document.querySelector(".runbutton").addEventListener("click", function() {
+                        run("bfs");
+                    });
+                }
             });
             document.querySelector(".menucontainer .dropdown .dropdown-content #dijkstra").addEventListener("click", function() {
-                document.querySelector(".dropbtn").innerHTML = "Dijkstras ▽";
-                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
-                document.querySelector(".runbutton").addEventListener("click", function() {
-                    run("dijkstras");
-                });
+                if (needreset == false) {
+                    document.querySelector(".dropbtn").innerHTML = "Dijkstras ▽";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    var button = document.querySelector(".menucontainer .runbutton");
+                    var old_element = button
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+                    document.querySelector(".runbutton").addEventListener("click", function() {
+                        run("dijkstras");
+                    });
+                }
             });
             document.querySelector(".menucontainer .dropdown .dropdown-content #astar").addEventListener("click", function() {
-                document.querySelector(".dropbtn").innerHTML = "A-Star ▽";
-                document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
-                document.querySelector(".runbutton").addEventListener("click", function() {
-                    run("astar");
-                });
+                if (needreset == false) {
+                    document.querySelector(".dropbtn").innerHTML = "A-Star ▽";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    var button = document.querySelector(".menucontainer .runbutton");
+                    var old_element = button
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+                    document.querySelector(".runbutton").addEventListener("click", function() {
+                        run("astar");
+                    });
+                }
             });
             mark = 0;
         }
@@ -298,6 +322,7 @@ var clear = function() {
 
 function run(type) {
     if (type == "dfs") {
+        needreset = true; 
         endingnode.visited = false; 
         removelisteners();
         var button = document.querySelector(".menucontainer .runbutton");
@@ -307,6 +332,7 @@ function run(type) {
         dfs(startingnode);
         animdfs(); 
     } else if (type == "dijkstras") {
+        needreset = true; 
         removelisteners(); 
         var button = document.querySelector(".menucontainer .runbutton");
         var old_element = button
@@ -315,6 +341,7 @@ function run(type) {
         dijkstra(startingnode);
         animdijkstra(); 
     } else if (type == "bfs") {
+        needreset = true; 
         removelisteners(); 
         var button = document.querySelector(".menucontainer .runbutton");
         var old_element = button
@@ -323,6 +350,7 @@ function run(type) {
         bfs(startingnode);
         animbfs();
     } else if (type == "astar") {
+        needreset = true; 
         var button = document.querySelector(".menucontainer .runbutton");
         var old_element = button
         var new_element = old_element.cloneNode(true);
@@ -373,6 +401,7 @@ function resetboardsmall() {
     addwalllisteners(); 
     record = true;
     coloryellow = false;  
+    needreset = false; 
 }
 
 function resetboardmedium() { 
@@ -402,6 +431,7 @@ function resetboardmedium() {
     addwalllisteners(); 
     record = true;
     coloryellow = false;  
+    needreset = false; 
 }
 
 
@@ -566,25 +596,42 @@ function astar(startingnode) {
     } else {
         createchunkmed(); 
     }
-    var startingchunk = astarmap.get(startingnode.id);
-    startingchunk.path = startingnode.id; 
+    var startingchunk = astarmap.get(startingnode.val);
+    startingchunk.path = startingnode.val; 
     startingchunk.f = startingchunk.heuristic;
     minheap.insert(startingchunk);
 
     while (true) {
         var chunk = minheap.pop();
-        var node = chunk.node; 
-        if (node == endingnode) {
-            return;
-        } else {
-            for (let i = 0; i < node.edges.length; i++) {
-
+        console.log(chunk);
+        var thisnode = chunk.node;
+        if (thisnode.visited == false) {
+            thisnode.visited = true; 
+            if (thisnode == endingnode) {
+                break;
+            } else {
+                for (let i = 0; i < thisnode.edges.length; i++) {
+                    let fringechunk = astarmap.get(thisnode.edges[i]);
+                    console.log(thisnode.edges[i]);
+                    console.log(fringechunk);
+                    let fringenode = fringechunk.node; 
+                    if (fringechunk.f > fringechunk.heuristic + fringenode.weight + chunk.sourced) {
+                        fringechunk.f = fringechunk.heuristic + fringenode.weight + chunk.sourced;
+                        fringechunk.path = chunk.path + "," + fringenode.val; 
+                        fringechunk.soured = fringenode.weight + chunk.sourced;
+                        if (fringechunk.inserted == false) {
+                            minheap.insert(fringechunk);
+                            fringechunk.inserted = true; 
+                        }  
+                    }
+    
+                }
+    
             }
 
-        }
+        } 
     }
-
-    
+    console.log(astarmap);   
 }
 
 function createchunksmall() {
@@ -594,12 +641,12 @@ function createchunksmall() {
             if (node == endingnode) {
                 continue; 
             }
-            let targeti = parseInt(endingnode.val.splice("-")[0], 10);
-            let targetj = parseInt(endingnode.val.splice("-")[1], 10);
+            let targeti = parseInt(endingnode.val.split("-")[0], 10);
+            let targetj = parseInt(endingnode.val.split("-")[1], 10);
             var subi = targeti - i;
             var subj = targetj - j;
             var heuristic = Math.hypot(subi, subj);
-            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(null, heuristic, Math.MAX_SAFE_INTEGER, "", node));
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(0, heuristic, Number.MAX_SAFE_INTEGER, "", node));
         }
     }
     
@@ -612,12 +659,12 @@ function createchunkmed() {
             if (node == endingnode) {
                 continue; 
             }
-            let targeti = parseInt(endingnode.val.splice("-")[0], 10);
-            let targetj = parseInt(endingnode.val.splice("-")[1], 10);
+            let targeti = parseInt(endingnode.val.split("-")[0], 10);
+            let targetj = parseInt(endingnode.val.split("-")[1], 10);
             var subi = targeti - i;
             var subj = targetj - j;
             var heuristic = Math.hypot(subi, subj);
-            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(null, heuristic, Math.MAX_SAFE_INTEGER, "", node));
+            astarmap.set(i.toString() + "-" + j.toString(), new Chunk(0, heuristic, Number.MAX_SAFE_INTEGER, "", node));
         }
     }
 
@@ -639,7 +686,7 @@ class Chunk {
         this.f = f; 
         this.path = path; 
         this.node = node; 
-        this.visited = false; 
+        this.inserted = false; 
     }
 }
 
@@ -657,7 +704,7 @@ class MinHeap {
         if (this.heap.length > 1) {
             let current = this.heap.length - 1; 
             while (current > 1 && this.heap[Math.floor(current / 2)].f > this.heap[current].f) {
-                [this.heap[Math.floor(current / 2)], this.heap[current]] = [this.heap[currnet], this.heap[Math.floor(current / 2)]];
+                [this.heap[Math.floor(current / 2)], this.heap[current]] = [this.heap[current], this.heap[Math.floor(current / 2)]];
                 current = Math.floor(current / 2);
             }
         }
