@@ -356,6 +356,7 @@ function run(type) {
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
         astar(startingnode);
+        animateastar(); 
 
     }
 }
@@ -540,7 +541,6 @@ async function animdfs() {
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
         await delay(14);
     }
-    debugger; 
     if (coloryellow == true) {
         for (let i = 0; i < animate.length; i++) {
             var node = animate[i];
@@ -600,22 +600,20 @@ function astar(startingnode) {
     startingchunk.path = startingnode.val; 
     startingchunk.f = startingchunk.heuristic;
     minheap.insert(startingchunk);
-
     while (true) {
         var chunk = minheap.pop();
-        console.log(chunk);
         var thisnode = chunk.node;
         if (thisnode.visited == false) {
             thisnode.visited = true; 
+            animate.push(thisnode);
             if (thisnode == endingnode) {
                 break;
             } else {
                 for (let i = 0; i < thisnode.edges.length; i++) {
                     let fringechunk = astarmap.get(thisnode.edges[i]);
-                    console.log(thisnode.edges[i]);
-                    console.log(fringechunk);
                     let fringenode = fringechunk.node; 
-                    if (fringechunk.f > fringechunk.heuristic + fringenode.weight + chunk.sourced) {
+                    if (fringechunk.f > fringechunk.heuristic + fringenode.weight + chunk.sourced && fringenode.visited == false) {
+                        animate.push(fringenode);
                         fringechunk.f = fringechunk.heuristic + fringenode.weight + chunk.sourced;
                         fringechunk.path = chunk.path + "," + fringenode.val; 
                         fringechunk.soured = fringenode.weight + chunk.sourced;
@@ -631,16 +629,34 @@ function astar(startingnode) {
 
         } 
     }
-    console.log(astarmap);   
+}
+
+async function animateastar() {
+    for (let i = 0; i < animate.length; i++) {
+        var node = animate[i];
+        document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
+        await delay(20);
+    }
+    var thechunk = astarmap.get(endingnode.val);
+    var thispath = thechunk.path;
+    var pathlist = thispath.split(",");
+    if (pathlist.length > 1) {
+        for (let i = 0; i < pathlist.length; i++) {
+            if (pathlist[i] != startingnode.val && pathlist[i] != endingnode.val) {
+                document.getElementById(pathlist[i]).style.boxShadow = "none";
+                document.getElementById(pathlist[i]).style.backgroundColor = "gold";   
+            }
+            await delay(5);
+        }
+    }
+    resetbutton(); 
+
 }
 
 function createchunksmall() {
     for (let j = 0; j < 30; j++) {
         for (let i = 0; i < 50; i++) {
             var node = nodes.get(i.toString() + "-" + j.toString());
-            if (node == endingnode) {
-                continue; 
-            }
             let targeti = parseInt(endingnode.val.split("-")[0], 10);
             let targetj = parseInt(endingnode.val.split("-")[1], 10);
             var subi = targeti - i;
@@ -656,9 +672,6 @@ function createchunkmed() {
     for (let j = 0; j < 60; j++) {
         for (let i = 0; i < 100; i++) {
             var node = nodes.get(i.toString() + "-" + j.toString());
-            if (node == endingnode) {
-                continue; 
-            }
             let targeti = parseInt(endingnode.val.split("-")[0], 10);
             let targetj = parseInt(endingnode.val.split("-")[1], 10);
             var subi = targeti - i;
