@@ -12,7 +12,9 @@ var generated;
 var startingnode;
 var endingnode;
 
+
 var main = function() {
+    checkdisplay(); 
     heading.style.paddingTop = "70px";
     small.style.marginTop = "60px";
     medium.style.marginTop = "60px";
@@ -20,6 +22,26 @@ var main = function() {
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
 }
+
+function checkdisplay() {
+    var x = window.matchMedia("(max-width: 940px)")
+    changedisplay(x); 
+    setTimeout(checkdisplay, 1000);
+}
+
+function changedisplay(x) {
+    if (x.matches) { // If media query matches
+        board.style.opacity = 0; 
+        document.querySelector(".menucontainer").style.opacity = 0; 
+        document.querySelector(".phoneannounce").innerHTML = "Sorry, Animations arn't optimized for small devices. <br> Switch to a laptop for the best experience.";
+    } else {
+        board.style.opacity = 1; 
+        document.querySelector(".menucontainer").style.opacity = 1; 
+        document.querySelector(".phoneannounce").innerHTML = "";
+
+    }
+}
+     
 
 var generatemedium = function() {
     clear();

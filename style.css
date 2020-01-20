@@ -64,6 +64,9 @@
     background-color: pink; 
 }
 
+.phoneannounce {
+    text-align: center;
+}
 .board {
     text-align: center;
     margin: 30 auto;
