@@ -4,7 +4,6 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-device-pixel-ratio: 1;
     margin: 0;
     padding: 0;
 }
