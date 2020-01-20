@@ -30,10 +30,10 @@ var generatemedium = function() {
             var sq = document.createElement("sq");   // Create a <button> element
             sq.id = i.toString() + "-" + j.toString(); 
             sq.classList.add("square");
-            sq.style.width = "9.6px";
-            sq.style.height = "9.6px";
+            sq.style.width = "10px";
+            sq.style.height = "10px";
             sq.style.backgroundColor = "white";
-            sq.style.border = "solid #87CEFA 0.15px";
+            sq.style.outline = "solid #87CEFA 0.3px";
             board.appendChild(sq);
             let node = null;
             let up = j - 1; 
@@ -67,6 +67,7 @@ var generatemedium = function() {
             element.addEventListener("click", function() {clickevent(i.toString() + "-" + j.toString()) });
         }
     }
+    board.style.border = "solid #87CEFA 1px";
 }
 
 var generatesmall = function() {
@@ -80,10 +81,10 @@ var generatesmall = function() {
             var sq = document.createElement("sq");   // Create a <button> element
             sq.id = i.toString() + "-" + j.toString(); 
             sq.classList.add("square");
-            sq.style.width = "19.6px";
-            sq.style.height = "19.6px";
+            sq.style.width = "20px";
+            sq.style.height = "20px";
             sq.style.backgroundColor = "white";
-            sq.style.border = "solid #87CEFA 0.15px";
+            sq.style.outline = "solid #87CEFA 0.3px";
             board.appendChild(sq);
             let node = null;
             let up = j - 1; 
@@ -117,6 +118,7 @@ var generatesmall = function() {
             element.addEventListener("click", function() {clickevent(i.toString() + "-" + j.toString()) });
         }
     }
+    board.style.border = "solid #87CEFA 1px";
 }
 
 
