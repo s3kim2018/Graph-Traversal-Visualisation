@@ -20,7 +20,7 @@ var main = function() {
     board.style.background = 'url("img/bridges.png")';
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
-    checkdisplay(); 
+    //checkdisplay(); 
 }
 
 function checkdisplay() {
