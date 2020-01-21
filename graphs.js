@@ -20,7 +20,7 @@ var main = function() {
     board.style.background = 'url("img/bridges.png")';
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
-    //checkdisplay(); 
+    checkdisplay(); 
 }
 
 function checkdisplay() {
@@ -746,7 +746,7 @@ class Heap {
         this.heap = [null];
     }
 	
-	insert = function(num) {
+	insert(num) {
 		this.heap.push(num);
 		if (this.heap.length > 2) {
 			let idx = this.heap.length - 1;
@@ -763,7 +763,7 @@ class Heap {
 		};
 	};
 	
-	remove = function() {
+	remove() {
 		let smallest = this.heap[1];
 		if (this.heap.length > 2) {
 			this.heap[1] = this.heap[this.heap.length - 1];
@@ -799,7 +799,7 @@ class Heap {
 		return smallest;
 	};
   
-	sort = function() {
+	sort() {
 		let result = new Array();
 		while (this.heap.length > 1) {
 			result.push(this.remove());
