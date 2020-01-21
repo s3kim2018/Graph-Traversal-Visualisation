@@ -14,13 +14,13 @@ var endingnode;
 
 
 var main = function() {
-    checkdisplay(); 
     heading.style.paddingTop = "70px";
     small.style.marginTop = "60px";
     medium.style.marginTop = "60px";
     board.style.background = 'url("img/bridges.png")';
     small.addEventListener("click", generatesmall);
     medium.addEventListener("click", generatemedium);
+    checkdisplay(); 
 }
 
 function checkdisplay() {
