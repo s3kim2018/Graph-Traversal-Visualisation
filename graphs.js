@@ -165,7 +165,9 @@ var clickevent = function(id) {
         } else {
             elem.style.backgroundColor = "brown";
             endingnode = nodes.get(id);
-            document.querySelector("h3").innerHTML = "Draw Walls (Drag)   Add Weights (Left Click)";
+            document.querySelector("h3").innerHTML = '<span id = "c1">Draw Walls </span> (Drag)   <span id = "c2">Add Weights</span> (Left Click)';
+            document.querySelector("#c1").style.color = "grey"; 
+            document.querySelector("#c2").style.color = "brown"; 
             removelisteners(); 
             addwalllisteners();
             var style1 = document.createElement("style");
@@ -632,9 +634,9 @@ async function animbfs() {
 }
 
 var astarmap = new Map();
+var pathfound = false; 
 function astar(startingnode) {
     var MinHeap = new Heap(); 
-    //var minheap = new MinHeap(); 
     if (generated == "small") {
         createchunksmall();
     } else {
@@ -644,16 +646,14 @@ function astar(startingnode) {
     startingchunk.path = startingnode.val; 
     startingchunk.f = startingchunk.heuristic;
     MinHeap.insert(startingchunk)
-    //minheap.insert(startingchunk);
-    while (MinHeap.heap.length > 1) {
-        //minheap.printheap(); 
+    while (MinHeap.heap.length >= 2) {
         var chunk = MinHeap.remove();
         var thisnode = chunk.node;
         console.log("The ID chosen is:" + thisnode.val);
         thisnode.visited = true; 
         animate.push(thisnode);
         if (thisnode == endingnode) {
-            console.log(astarmap);
+            pathfound = true; 
             return;
         }
         for (let i = 0; i < thisnode.edges.length; i++) {
@@ -667,12 +667,15 @@ function astar(startingnode) {
                     fringechunk.soured = fringenode.weight + chunk.sourced;
                     if (fringechunk.inserted == false) {
                         MinHeap.insert(fringechunk);
-                        //minheap.insert(fringechunk);
                         fringechunk.inserted = true; 
                     }
                 } 
             }
 
+        }
+        if (MinHeap.heap.length === 1) {
+            console.log("not found");
+            return;
         }         
     
     }
@@ -685,16 +688,18 @@ async function animateastar() {
         document.getElementById(node.val).style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
         await delay(20);
     }
-    var thechunk = astarmap.get(endingnode.val);
-    var thispath = thechunk.path;
-    var pathlist = thispath.split(",");
-    if (pathlist.length > 1) {
-        for (let i = 0; i < pathlist.length; i++) {
-            if (pathlist[i] != startingnode.val && pathlist[i] != endingnode.val) {
-                document.getElementById(pathlist[i]).style.boxShadow = "none";
-                document.getElementById(pathlist[i]).style.backgroundColor = "gold";   
+    if (pathfound == true) {
+        var thechunk = astarmap.get(endingnode.val);
+        var thispath = thechunk.path;
+        var pathlist = thispath.split(",");
+        if (pathlist.length > 1) {
+            for (let i = 0; i < pathlist.length; i++) {
+                if (pathlist[i] != startingnode.val && pathlist[i] != endingnode.val) {
+                    document.getElementById(pathlist[i]).style.boxShadow = "none";
+                    document.getElementById(pathlist[i]).style.backgroundColor = "gold";   
+                }
+                await delay(5);
             }
-            await delay(5);
         }
     }
     resetbutton(); 
@@ -788,7 +793,7 @@ class Heap {
 			let i = 1;
 			let left = 2 * i;
 			let right = 2 * i + 1;
-			while (this.heap[i].f >= this.heap[left].f || this.heap[i].f >= this.heap[right].f) {
+			while (this.heap[left] && this.heap[right] && (this.heap[i].f >= this.heap[left].f || this.heap[i].f >= this.heap[right].f)) {
 				if (this.heap[left].f < this.heap[right].f) {
 					[this.heap[i], this.heap[left]] = [this.heap[left], this.heap[i]];
 					i = 2 * i
