@@ -269,6 +269,17 @@ var addwalllisteners = function() {
         elem.addEventListener("mouseup", function() {
             drawwalls(elem, 3);
         });
+        elem.addEventListener("touchstart", function(event) {
+            if (event.button == 0) {
+                drawwalls(elem, 1);
+            }
+        });
+        elem.addEventListener("touchmove", function() {
+            drawwalls(elem, 2);
+        });
+        elem.addEventListener("touchstart", function() {
+            drawwalls(elem, 3);
+        });
         elem.addEventListener("contextmenu", function(){
             addweights(elem);
         });
