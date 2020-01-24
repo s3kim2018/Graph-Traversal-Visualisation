@@ -344,14 +344,17 @@ var drawwalls = function(elem, state) {
     }
 }
 
-var addweights = function(elem) { 
+var addweights = function(elem) {
     var node = idmap.get(elem);
-    node.weight = 5;
-    elem.style.backgroundColor = "pink";
-    nodes.delete(elem.id);
-    idmap.delete(elem);
-    nodes.set(elem.id, node)
-    idmap.set(elem, node);
+    if (node != startingnode && node != endingnode) {
+        node.weight = 5;
+        elem.style.backgroundColor = "pink";
+        nodes.delete(elem.id);
+        idmap.delete(elem);
+        nodes.set(elem.id, node)
+        idmap.set(elem, node);
+    }
+
 }
 
 var clear = function() {
@@ -421,7 +424,7 @@ function run(type) {
         old_element.parentNode.replaceChild(new_element, old_element);
         var krusk = new MSTgraph(); 
         krusk.kruskalMST(); 
-        //FIXME
+        kruskalanimate(); 
     }
 }
 
@@ -797,9 +800,11 @@ class MSTgraph {
                     if (node.visited == false) {
                         for (let k = 0; k < node.edges.length; k++) {
                             let dest = node.edges[k];
-                            let edge = new edges(i.toString() + "-" + j.toString(), dest, node.val)
-                            elist.push(edge);
-                            totlist.push(edge);
+                            if (nodes.get(dest).visited == false && node.visited == false) {
+                                let edge = new edges(i.toString() + "-" + j.toString(), dest, nodes.get(dest).weight + node.weight);
+                                elist.push(edge);
+                                totlist.push(edge);
+                            }
                         }
                         node.edgenodes = elist; 
                     }
@@ -810,36 +815,35 @@ class MSTgraph {
                 for (let i = 0; i < 50; i++) {
                     var node = nodes.get(i.toString() + "-" + j.toString());
                     var elist = []; 
-                    if (node.visited == false) {
                         for (let k = 0; k < node.edges.length; k++) {
-                            let dest = node.edges[k]; 
-                            let edge = new edges(i.toString() + "-" + j.toString(), dest, node.val)
+                        let dest = node.edges[k]; 
+                        if (nodes.get(dest).visited == false && node.visited == false) {
+                            let edge = new edges(i.toString() + "-" + j.toString(), dest, nodes.get(dest).weight + node.weight);
                             elist.push(edge);
-                            totlist.push(edge)
-                        }
-                        node.edgenodes = elist; 
+                            totlist.push(edge);
+                        }                        
                     }
+                    node.edgenodes = elist; 
+
                 }
             }
             console.log(totlist); 
 
         }
         for (let i = 0; i < totlist.length; i++) {
-            this.MSTheap.insert(totlist[i]);
+            if (totlist[i] != null && totlist[i].dest != null && totlist[i].src != null) {
+                this.MSTheap.insert(totlist[i]);
+            }
         }
 
     }
     find(subsets, i, indexes) { //problem
-        debugger; 
         if (subsets[indexes.get(i)].parent != i) {
-            subsets[indexes.get(i)].parent = find(subsets, subsets[indexes.get(i)].parent, indexes);
+            subsets[indexes.get(i)].parent = this.find(subsets, subsets[indexes.get(i)].parent, indexes);
         }
-        console.log(subsets[indexes.get(i)].parent);
         return subsets[indexes.get(i)].parent;
     }
     union(subsets, x, y, indexes) {
-        console.log(x);
-        console.log(y);
         let xroot = this.find(subsets, x, indexes);
         let yroot = this.find(subsets, y, indexes);
         if (subsets[indexes.get(xroot)].rank < subsets[indexes.get(yroot)].rank) {
@@ -859,19 +863,25 @@ class MSTgraph {
         if (generated == "small") {
             for (let j = 0; j < 30; j++) {
                 for (let i = 0; i < 50; i++) {
-                    var sub = new subset(i.toString() + "-" + j.toString(), 0)
-                    subsets.push(sub);
-                    indexes.set(i.toString() + "-" + j.toString(), nodelength);
-                    nodelength++;
+                    var node = nodes.get(i.toString() + "-" + j.toString());
+                    if (node.visited == false) {
+                        var sub = new subset(i.toString() + "-" + j.toString(), 0);
+                        subsets.push(sub);
+                        indexes.set(i.toString() + "-" + j.toString(), nodelength);
+                        nodelength++;
+                    }
                 }
             }
         } else {
             for (let j = 0; j < 60; j++) {
                 for (let i = 0; i < 100; i++) {
-                    var sub = new subset(i.toString() + "-" + j.toString(), 0);
-                    indexes.set(i.toString() + "-" + j.toString(), nodelength);
-                    subsets.push(sub);
-                    nodelength++;
+                    var node = nodes.get(i.toString() + "-" + j.toString());
+                    if (node.visited == false) {
+                        var sub = new subset(i.toString() + "-" + j.toString(), 0);
+                        subsets.push(sub);
+                        indexes.set(i.toString() + "-" + j.toString(), nodelength);
+                        nodelength++;
+                    }
                 }
             }
 
@@ -891,10 +901,38 @@ class MSTgraph {
             }
 
         }
-        console.log(animate);
     }
 
 }
+
+var kruskalanimate = async function() {
+    debugger;
+    for (let i = 0; i < animate.length; i++) {
+        var nodey = animate[i];
+        for (let i = 0; i < 2; i++) {
+            var node = document.getElementById(nodey[i]);
+            var checknode = nodes.get(nodey[i]);
+            if (checknode == startingnode || checknode == endingnode) {
+                continue; 
+            }
+            node.style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
+            await delay(2);
+        }
+        await delay(80);
+        for (let i = 0; i < 2; i++) {
+            var node = document.getElementById(nodey[i]);
+            var checknode = nodes.get(nodey[i]);
+            if (checknode == startingnode || checknode == endingnode) {
+                continue; 
+            }
+            node.style.boxShadow = "none";
+            node.style.backgroundColor = "gold";  
+        }
+        await delay(3);
+    }
+    resetbutton(); 
+}
+
 
 /* Class Designed to store nodes, heuristic, and f value for A* Algorithm **/
 class Chunk {
