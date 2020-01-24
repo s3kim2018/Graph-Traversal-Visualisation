@@ -906,7 +906,6 @@ class MSTgraph {
 }
 
 var kruskalanimate = async function() {
-    debugger;
     for (let i = 0; i < animate.length; i++) {
         var nodey = animate[i];
         for (let i = 0; i < 2; i++) {
@@ -916,7 +915,7 @@ var kruskalanimate = async function() {
                 continue; 
             }
             node.style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
-            await delay(2);
+            await delay(1);
         }
         await delay(80);
         for (let i = 0; i < 2; i++) {
@@ -928,7 +927,7 @@ var kruskalanimate = async function() {
             node.style.boxShadow = "none";
             node.style.backgroundColor = "gold";  
         }
-        await delay(3);
+        await delay(2);
     }
     resetbutton(); 
 }
