@@ -915,7 +915,7 @@ var kruskalanimate = async function() {
                 continue; 
             }
             node.style.boxShadow = "0px 0px 5px 1.5px #fc9 inset";
-            await delay(1);
+            await delay(0.25);
         }
         await delay(80);
         for (let i = 0; i < 2; i++) {
@@ -927,7 +927,6 @@ var kruskalanimate = async function() {
             node.style.boxShadow = "none";
             node.style.backgroundColor = "gold";  
         }
-        await delay(2);
     }
     resetbutton(); 
 }
