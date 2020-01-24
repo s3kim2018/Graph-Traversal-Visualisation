@@ -236,6 +236,19 @@ var clickevent = function(id) {
                     });
                 }
             });
+            document.querySelector(".menucontainer .dropdown .dropdown-content #kruskal").addEventListener("click", function() {
+                if (needreset == false) {
+                    document.querySelector(".dropbtn").innerHTML = "Kruskal MST ▽";
+                    document.querySelector(".runbutton").innerHTML = "Run Algorithm!";
+                    var button = document.querySelector(".menucontainer .runbutton");
+                    var old_element = button
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+                    document.querySelector(".runbutton").addEventListener("click", function() {
+                        run("kruskal");
+                    });
+                }
+            });
             mark = 0;
         }
     }
@@ -400,7 +413,15 @@ function run(type) {
         old_element.parentNode.replaceChild(new_element, old_element);
         astar(startingnode);
         animateastar(); 
-
+    } else if (type == "kruskal") {
+        needreset = true; 
+        var button = document.querySelector(".menucontainer .runbutton");
+        var old_element = button
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        var krusk = new MSTgraph(); 
+        krusk.kruskalMST(); 
+        //FIXME
     }
 }
 
@@ -744,6 +765,137 @@ async function delay(delayInms) {
     });
 }
 
+/* Class to detect cycles in graph using union find and path compression **/
+class edges {
+    constructor(src, dest, weight) {
+        this.src = src; 
+        this.dest = dest;
+        this.f = weight; 
+
+    }
+}
+
+/* Class to detect cycles in graph using union find and path compression **/
+class subset {
+    constructor(parent, rank) {
+        this.parent = parent;
+        this.rank = rank;
+
+    }
+}
+
+/* Class to detect cycles in graph using union find and path compression **/
+var totlist = []; 
+class MSTgraph {
+    constructor() {
+        this.MSTheap = new Heap(); 
+        if (generated == "medium") {
+            for (let j = 0; j < 60; j++) {
+                for (let i = 0; i < 100; i++) {
+                    var node = nodes.get(i.toString() + "-" + j.toString());
+                    var elist = []; 
+                    if (node.visited == false) {
+                        for (let k = 0; k < node.edges.length; k++) {
+                            let dest = node.edges[k];
+                            let edge = new edges(i.toString() + "-" + j.toString(), dest, node.val)
+                            elist.push(edge);
+                            totlist.push(edge);
+                        }
+                        node.edgenodes = elist; 
+                    }
+                }
+            }
+        } else if (generated == "small") {
+            for (let j = 0; j < 30; j++) {
+                for (let i = 0; i < 50; i++) {
+                    var node = nodes.get(i.toString() + "-" + j.toString());
+                    var elist = []; 
+                    if (node.visited == false) {
+                        for (let k = 0; k < node.edges.length; k++) {
+                            let dest = node.edges[k]; 
+                            let edge = new edges(i.toString() + "-" + j.toString(), dest, node.val)
+                            elist.push(edge);
+                            totlist.push(edge)
+                        }
+                        node.edgenodes = elist; 
+                    }
+                }
+            }
+            console.log(totlist); 
+
+        }
+        for (let i = 0; i < totlist.length; i++) {
+            this.MSTheap.insert(totlist[i]);
+        }
+
+    }
+    find(subsets, i, indexes) { //problem
+        debugger; 
+        if (subsets[indexes.get(i)].parent != i) {
+            subsets[indexes.get(i)].parent = find(subsets, subsets[indexes.get(i)].parent, indexes);
+        }
+        console.log(subsets[indexes.get(i)].parent);
+        return subsets[indexes.get(i)].parent;
+    }
+    union(subsets, x, y, indexes) {
+        console.log(x);
+        console.log(y);
+        let xroot = this.find(subsets, x, indexes);
+        let yroot = this.find(subsets, y, indexes);
+        if (subsets[indexes.get(xroot)].rank < subsets[indexes.get(yroot)].rank) {
+            subsets[indexes.get(xroot)].parent = yroot; 
+        } else if (subsets[indexes.get(yroot)].rank < subsets[indexes.get(xroot)].rank) {
+            subsets[indexes.get(yroot)].parent = xroot; 
+        } else {
+            subsets[indexes.get(xroot)].parent = yroot; 
+            subsets[indexes.get(yroot)].rank++; 
+        }
+    }
+    kruskalMST() {
+        let e = 0; 
+        var indexes = new Map(); 
+        let nodelength = 0; 
+        var subsets = new Array(); 
+        if (generated == "small") {
+            for (let j = 0; j < 30; j++) {
+                for (let i = 0; i < 50; i++) {
+                    var sub = new subset(i.toString() + "-" + j.toString(), 0)
+                    subsets.push(sub);
+                    indexes.set(i.toString() + "-" + j.toString(), nodelength);
+                    nodelength++;
+                }
+            }
+        } else {
+            for (let j = 0; j < 60; j++) {
+                for (let i = 0; i < 100; i++) {
+                    var sub = new subset(i.toString() + "-" + j.toString(), 0);
+                    indexes.set(i.toString() + "-" + j.toString(), nodelength);
+                    subsets.push(sub);
+                    nodelength++;
+                }
+            }
+
+        }
+        while (e < nodelength - 1) {
+            var next_edge = this.MSTheap.remove(); 
+            let x = this.find(subsets, next_edge.src, indexes);
+            let y = this.find(subsets, next_edge.dest, indexes);
+            if (x != y) {
+                e++; 
+                var temparray = []; 
+                temparray.push(next_edge.src);
+                temparray.push(next_edge.dest);
+                animate.push(temparray);
+                temparray = [];
+                this.union(subsets, x, y, indexes);
+            }
+
+        }
+        console.log(animate);
+    }
+
+}
+
 /* Class Designed to store nodes, heuristic, and f value for A* Algorithm **/
 class Chunk {
     constructor(sourced, heuristic, f, path, node) {
@@ -833,6 +985,7 @@ class Graph {
         this.edges = edges; 
         this.visited = false; 
         this.weight = weight;
+        this.edgenodes = null; 
     }
 
 }
